@@ -40,7 +40,7 @@ body {
     width: 96%;
 }
 
-.tab-row:hover {
+.tab-row.focused {
     background-color: var(--hover-bg-color);
 }
 

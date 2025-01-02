@@ -1,6 +1,8 @@
+currentFocusedId = "";
+
 // Updates the tabs list with a search filter.
 async function updateTabsList(searchTerm) {
-    const tabs = await browser.tabs.query({});
+    const tabs = await browser.tabs.query({ currentWindow: false });
     const tabsList = document.getElementById("tabs-list");
     if (!tabsList) {
         return console.error("No tabs list element found in the popup!");
@@ -9,7 +11,7 @@ async function updateTabsList(searchTerm) {
     tabsList.innerHTML = "";
 
     // Populate the list with each tab's title, image and host url.
-    tabs.forEach(tab => {
+    tabs.forEach((tab) => {
         if (searchTerm && !tab.title.toLowerCase().includes(searchTerm)) {
             return;
         }
@@ -30,9 +32,19 @@ async function updateTabsList(searchTerm) {
         li.appendChild(favicon);
         li.appendChild(textContainer);
 
+        if (currentFocusedId === "") {
+            currentFocusedId = li.dataset.tabId;
+            li.classList.add("focused");
+        }
+
+        //Add event listeners to the list items.
         li.addEventListener("click", () => {
             browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
             window.close();
+        });
+        li.addEventListener("mouseenter", () => {
+            currentFocusedId = li.dataset.tabId;
+            highlightFocusedRow();
         });
 
         tabsList.appendChild(li);
@@ -40,12 +52,6 @@ async function updateTabsList(searchTerm) {
 
     document.getElementById("search").focus();
 }
-
-// Listens for search input changes and updates the tabs list.
-document.getElementById("search").addEventListener("input", (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    updateTabsList(searchTerm);
-});
 
 // Sets the theme colors if needed.
 async function setTheme() {
@@ -61,12 +67,32 @@ async function setTheme() {
     }
 };
 
-// Close the popup window since commands can't register "escape".
+// Adds some keydown event listening..
 document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
         window.close();
+    } else if (event.key === "Enter") {
+        const li = document.querySelector(".tab-row.focused");
+        browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
+        window.close();
     }
 });
+
+// Listens for search input changes and updates the tabs list.
+document.getElementById("search").addEventListener("input", (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    currentFocusedId = "";
+    updateTabsList(searchTerm);
+});
+
+// Toggle the focused class on the tab rows.
+function highlightFocusedRow() {
+    const tabsList = document.getElementById("tabs-list");
+    const rows = tabsList.querySelectorAll(".tab-row");
+    rows.forEach((row) => {
+        row.classList.toggle("focused", row.dataset.tabId == currentFocusedId);
+    });
+}
 
 // Initial calls to set up the popup.
 updateTabsList();
