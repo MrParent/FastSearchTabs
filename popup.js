@@ -30,6 +30,11 @@ async function updateTabsList(searchTerm) {
         li.appendChild(favicon);
         li.appendChild(textContainer);
 
+        li.addEventListener("click", () => {
+            browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
+            window.close();
+        });
+
         tabsList.appendChild(li);
     });
 
@@ -61,18 +66,6 @@ document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
         window.close();
     }
-});
-
-// listen for clicks on the tabs list and change tab to the one that you select.
-document.getElementById("tabs-list").addEventListener("click", (event) => {
-    //get the clicked tab from the tabs-list
-    const selectedTab = event.target.closest(".tab-row");
-    if (!selectedTab) {
-        return;
-    }
-
-    browser.tabs.update(parseInt(selectedTab.dataset.tabId, 10), { active: true });
-    window.close();
 });
 
 // Initial calls to set up the popup.
