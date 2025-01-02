@@ -3,21 +3,28 @@ let currentPopupWindowId = null;
 
 // Creates a new popup window.
 async function createPopupWindow() {
-  const popupWidth = 832;
-  const popupHeight = 300;
   const currentWindow = await browser.windows.getCurrent();
 
+  const currentWidth = currentWindow.width ?? 800;
+  const currentHeight = currentWindow.height ?? 600;
+  const maxHeight = currentHeight * 0.8;
   const currentLeft = currentWindow.left ?? 0;
   const currentTop = currentWindow.top ?? 0;
-  const currentWidth = currentWindow.width ?? 800;
   const left = currentLeft + currentWidth / 4;
   const top = currentTop + 160;
+ 
+  const tabs = await browser.tabs.query({});
+  const tabsCount = tabs.length;
+
+  // Scale the window height depending on the number of tabs.
+  const height = parseInt(Math.min((128 + 28 * tabsCount), maxHeight));
+  const width = parseInt(currentWidth/2); 
 
   const popup = await browser.windows.create({
     url: browser.runtime.getURL("popup.html"),
     type: "popup",
-    width: popupWidth,
-    height: popupHeight,
+    width: width,
+    height: height,
     top: top,
     left: left
   });
