@@ -58,6 +58,13 @@ async function setTheme() {
     }
 };
 
+// Close the popup window since commands can't register "escape".
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+        window.close();
+    }
+});
+
 // Initial calls to set up the popup.
 updateTabsList();
 setTheme();
