@@ -1,0 +1,58 @@
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --focus-outline-color: #005fcc;
+    --hover-bg-color: #005fcc; /*rgba(0, 0, 0, 0.05); */
+}
+
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 1rem;
+    overflow: auto;
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+        --focus-outline-color: #339af0;
+        --hover-bg-color: rgba(255, 255, 255, 0.211);
+    }
+}
+
+#tabs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+.tab-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    cursor: pointer;
+    width: 96%;
+}
+
+.tab-row:hover {
+    background-color: var(--hover-bg-color);
+}
+
+.tab-row img {
+    width: 1rem;
+    height: 1rem;
+    object-fit: contain;
+}
+
+input[type="text"] {
+    width: 94%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
