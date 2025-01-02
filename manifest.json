@@ -12,7 +12,7 @@
   },
   "commands": {
     "open-popup": {
-      "suggested_key": { "default": "Ctrl+Shift+U" },
+      "suggested_key": { "default": "Ctrl+Alt+S" },
       "description": "Send a 'toggle-feature' event to the extension"
     }
   },

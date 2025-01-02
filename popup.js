@@ -31,8 +31,6 @@ async function updateTabsList(searchTerm) {
         li.appendChild(textContainer);
 
         tabsList.appendChild(li);
-
-        console.log("Added tab:", tab.title);
     });
 
     document.getElementById("search").focus();
