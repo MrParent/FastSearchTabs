@@ -75,6 +75,24 @@ document.addEventListener("keydown", (event) => {
         const li = document.querySelector(".tab-row.focused");
         browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
         window.close();
+    } else if (event.key === "Tab") {
+        const tabsList = document.getElementById("tabs-list");
+        const focusedElement = tabsList.querySelector(".focused");
+        let newFocusedElement;
+        event.preventDefault(); // Prevents the default tab behavior.
+        if (event.shiftKey) {
+            newFocusedElement = focusedElement.previousElementSibling || focusedElement.parentElement.lastElementChild;
+        } else {
+            newFocusedElement = focusedElement.nextElementSibling || focusedElement.parentElement.firstElementChild;
+        }
+
+        if (newFocusedElement) {
+            focusedElement.classList.remove("focused");
+            newFocusedElement.classList.add("focused");
+            currentFocusedId = newFocusedElement.dataset.tabId;
+        }
+        
+        highlightFocusedRow();
     }
 });
 
