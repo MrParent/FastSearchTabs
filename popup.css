@@ -28,8 +28,6 @@ body {
     color: var(--text-color);
 }
 
-
-
 #tabs-list {
     list-style: none;
     padding: 0;
@@ -38,7 +36,7 @@ body {
 
 .tab-row {
     display: flex;
-    align-items: center;
+    align-items: left;
     gap: 0.5rem;
     padding: 0.25rem;
     cursor: pointer;

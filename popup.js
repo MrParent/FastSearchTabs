@@ -2,7 +2,11 @@ currentFocusedId = "";
 
 // Updates the tabs list with a search filter.
 async function updateTabsList(searchTerm) {
-    const tabs = await browser.tabs.query({ currentWindow: false });
+    const tabs = await fetchMRUTabs();
+    //change the first tab index to be the last tab.
+    const firstTab = tabs.shift();
+    tabs.push(firstTab);
+
     const tabsList = document.getElementById("tabs-list");
     if (!tabsList) {
         return console.error("No tabs list element found in the popup!");
@@ -28,6 +32,11 @@ async function updateTabsList(searchTerm) {
         const textContainer = document.createElement("span");
         const domain = new URL(tab.url).host;
         textContainer.textContent = `${tab.title} — ${domain}`;
+        //last index tab
+        const last = tabs.indexOf(tab) === tabs.length - 1;
+        if (last) {
+            textContainer.textContent = `${tab.title} — ${domain} — (Current Tab)`;
+        }
 
         li.appendChild(favicon);
         li.appendChild(textContainer);
@@ -110,6 +119,13 @@ function highlightFocusedRow() {
     rows.forEach((row) => {
         row.classList.toggle("focused", row.dataset.tabId == currentFocusedId);
     });
+}
+
+// Fetches the MRU tabs and updates the tabs list.
+async function fetchMRUTabs() {
+    const response = await browser.runtime.sendMessage({ command: "getMRUTabs" });
+    const tabs = response.tabs;
+    return tabs;
 }
 
 // Initial calls to set up the popup.
