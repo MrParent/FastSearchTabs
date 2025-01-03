@@ -75,12 +75,12 @@ document.addEventListener("keydown", (event) => {
         const li = document.querySelector(".tab-row.focused");
         browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
         window.close();
-    } else if (event.key === "Tab") {
+    } else if (event.key === "Tab" || event.key === "ArrowDown" || event.key === "ArrowUp") {
         const tabsList = document.getElementById("tabs-list");
         const focusedElement = tabsList.querySelector(".focused");
         let newFocusedElement;
         event.preventDefault(); // Prevents the default tab behavior.
-        if (event.shiftKey) {
+        if (event.key === "Tab" && event.shiftKey || event.key === "ArrowUp") {
             newFocusedElement = focusedElement.previousElementSibling || focusedElement.parentElement.lastElementChild;
         } else {
             newFocusedElement = focusedElement.nextElementSibling || focusedElement.parentElement.firstElementChild;
