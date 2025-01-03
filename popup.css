@@ -1,8 +1,20 @@
 :root {
-    --bg-color: #ffffff;
+    --bg-color: #F9F9FB;
     --text-color: #000000;
-    --focus-outline-color: #005fcc;
-    --hover-bg-color: #005fcc; /*rgba(0, 0, 0, 0.05); */
+    --hover-bg-color: #dedede; /*rgba(0, 0, 0, 0.05); */
+    --text-border-color: #046bab;
+    --text-bg-color: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+        --hover-bg-color: rgba(255, 255, 255, 0.17);
+        --text-border-color: #0ca2ff84;
+        --text-bg-color: #1e1e1e;
+
+    }
 }
 
 body {
@@ -16,14 +28,7 @@ body {
     color: var(--text-color);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg-color: #121212;
-        --text-color: #ffffff;
-        --focus-outline-color: #339af0;
-        --hover-bg-color: rgba(255, 255, 255, 0.211);
-    }
-}
+
 
 #tabs-list {
     list-style: none;
@@ -55,4 +60,9 @@ input[type="text"] {
     padding: 0.5rem;
     margin-bottom: 0.5rem;
     font-size: 1rem;
+    border-style: none;
+    outline: 2px solid var(--text-border-color);
+    border-radius: 0.25rem;
+    background-color: var(--text-bg-color);
+    color: var(--text-color);
 }
