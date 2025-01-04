@@ -40,14 +40,14 @@ async function updateTabsList(searchTerm) {
 
         const textContainer = document.createElement("span");
         const domain = new URL(tab.url).host;
-        const timeSinceOpenedString = getTimeStampString(timestamps[tab.id]);
+        const timeSinceString = timeSince(timestamps[tab.id]);
 
-        textContainer.textContent = `${tab.title} — ${domain}` + " (" + timeSinceOpenedString + ")";
+        textContainer.textContent = `${tab.title} — ${domain}` + " (" + timeSinceString + ")";
         
         //last index tab
         const last = tabs.indexOf(tab) === tabs.length - 1;
         if (last) {
-            textContainer.textContent = `${tab.title} — ${domain}` + " (Open now)";
+            textContainer.textContent = `${tab.title} — ${domain}` + " (Current tab)";
         }
 
         li.appendChild(favicon);
@@ -85,23 +85,18 @@ async function updateTabsList(searchTerm) {
     document.getElementById("search").focus();
 }
 
-//Get time stamp string from time stamp.
-function getTimeStampString(timeStamp) {
-    const timeSinceOpened = timeStamp ? Date.now() - timeStamp : 0;
-    // time since opened in seconds, min if more than 60s, hour if more than 60min, day if more than 24h
-    let timeSinceOpenedString = `${Math.floor(timeSinceOpened / 1000)}sec`;
-    if (timeSinceOpened > 60000) {
-        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 60000)}min`;
-    }
-    if (timeSinceOpened > 3600000) {
-        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 3600000)}hours`;
-    }
-    if (timeSinceOpened > 86400000) {
-        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 86400000)}days`;
-    }
-
-    return timeSinceOpenedString = 'Last visited ' + timeSinceOpenedString + ' ago';
-}
+// Get the time since the timestamp.
+function timeSince(timestamp) {
+    const now = Date.now();
+    const seconds = Math.floor((now - timestamp) / 1000);
+    if (seconds < 60) return `${seconds} seconds ago`;
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} minutes ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}hours ago`;
+    const days = Math.floor(hours / 24);
+    return `${days}days ago`;
+  }
 
 // Sets the theme colors if needed.
 async function setTheme() {

@@ -1,14 +1,23 @@
 {
   "manifest_version": 2,
-  "name": "Fast tab",
+  "name": "Fastlane Tabs",
   "version": "1.0",
-  "description": "Creates a centered popup listing open tabs.",
+  "description": "Creates a popup for switching tabs fast and easy, with similar functionality as tab switching often has in other browsers.",
   "permissions": ["tabs", "storage"],
   "background": {
     "scripts": ["background.js"]
   },
+  "icons": {
+    "16": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  },
   "browser_action": {
-    "default_title": "Fast tab"
+    "default_title": "Fastlane Tabs",
+    "default_icon": {
+      "16": "icon.svg",
+      "32": "icon.svg"
+    }
   },
   "commands": {
     "open-popup": {
