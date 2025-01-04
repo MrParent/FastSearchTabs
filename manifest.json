@@ -3,7 +3,7 @@
   "name": "Fast tab",
   "version": "1.0",
   "description": "Creates a centered popup listing open tabs.",
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "storage"],
   "background": {
     "scripts": ["background.js"]
   },

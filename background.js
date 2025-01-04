@@ -37,7 +37,7 @@ browser.commands.onCommand.addListener(async (command) => {
   if (command === "open-popup") {
     if (currentPopupWindowId !== null) {
       try {
-        await browser.windows.remove(currentPopupWindowId);
+        await browser.windows.remove(currentPopupWindowId);        
       } catch (err) {
         console.warn("Tried to close an old window, but it may already be closed:", err);
       }
@@ -74,43 +74,61 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
 // Global array of tab IDs, most recent first
 let visitedTabs = [];
 
-// visitedTimestamps: map of tabId -> last visited timestamp (in ms since epoch).
-let visitedTimestamps = {};
+// Map of tabId to last visit timestamps
+let tabLastVisitMap = {};
+
+(async function loadFromStorage() {
+  try {
+    // Load the visitedTabs and tabLastVisitMap from storage.
+    // If the key is not found, the default value is used.
+    const { 
+      visitedTabs: storedVisitedTabs = [], 
+      tabLastVisitMap: storedTabLastVisitMap = {} 
+    } = await browser.storage.local.get({
+      visitedTabs: [],
+      tabLastVisitMap: {}
+    });
+    
+    visitedTabs = storedVisitedTabs;
+    tabLastVisitMap = storedTabLastVisitMap;
+
+  } catch (err) {
+    console.error("Error loading from storage:", err);
+    visitedTabs = [];
+    tabLastVisitMap = {};
+  }
+})();
 
 /**
  * Listens for tab activation (when user switches to a tab).
  * Moving tab ID to the front of the `recentTabs`.
  */
-browser.tabs.onActivated.addListener((activeInfo) => {
-  const activatedTabId = activeInfo.tabId;
+browser.tabs.onActivated.addListener(async (activeInfo) => {
+  const { tabId } = activeInfo;
+  const currentWindow = await browser.windows.get(activeInfo.windowId);
+  if (currentWindow.type === "popup") {
+    return;
+  }
 
-  const existingIndex = visitedTabs.indexOf(activatedTabId);
+  tabLastVisitMap[tabId] = Date.now();
+
+  const existingIndex = visitedTabs.indexOf(tabId);
   if (existingIndex !== -1) {
     visitedTabs.splice(existingIndex, 1);
   }
 
-  visitedTabs.unshift(activatedTabId);
-  
-  if (visitedTabs.length > 100) {
-    visitedTabs.pop();
-  }
+  visitedTabs.unshift(tabId);
 
-  visitedTimestamps[activatedTabId] = Date.now();
-});
-
-/**
- * Removes any closed tabs from our list to avoid stale IDs.
- */
-browser.tabs.onRemoved.addListener((tabId) => {
-  const index = visitedTabs.indexOf(tabId);
-  if (index !== -1) {
-    visitedTabs.splice(index, 1);
-  }
-
-  if (visitedTimestamps[tabId]) {
-    delete visitedTimestamps[tabId];
+  try {
+    await browser.storage.local.set({
+      visitedTabs,
+      tabLastVisitMap
+    });
+  } catch (err) {
+    console.error("Error saving to storage:", err);
   }
 });
+
 
 /**
  * Gets the current visitedTabs and timestamps
@@ -120,7 +138,7 @@ async function getVisitedData() {
   const mRUTabs = await getTabsInMRUOrder();
   return {
     tabs: mRUTabs,       
-    timestamps: visitedTimestamps
+    timestamps: tabLastVisitMap
   };
 }
 
