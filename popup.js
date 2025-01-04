@@ -40,8 +40,13 @@ async function updateTabsList(searchTerm) {
 
         const textContainer = document.createElement("span");
         const domain = new URL(tab.url).host;
-        const timeSinceString = timeSince(timestamps[tab.id]);
-
+        const timeStamp = timestamps[tab.id];
+        let timeSinceString;
+        if (!timeStamp) {
+            timeSinceString = "Not visited";
+        } else {
+            timeSinceString = timeSince(timestamps[tab.id]);
+        }
         textContainer.textContent = `${tab.title} — ${domain}` + " (" + timeSinceString + ")";
         
         //last index tab
