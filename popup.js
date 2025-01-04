@@ -2,11 +2,20 @@ currentFocusedId = "";
 
 // Updates the tabs list with a search filter.
 async function updateTabsList(searchTerm) {
-    const tabs = await fetchMRUTabs();
-    //change the first tab index to be the last tab.
+    const visitedData = await fetchVisitedData();
+    const tabs = visitedData.tabs;
+    if (!tabs) {
+        return console.warn("The add-on can't find any tabs.");
+    }
+
+    const timestamps = visitedData.timestamps;
+    if (!timestamps) {
+        console.warn("No timestamps found. Since the timestamps are used per session and are recorded in the add-on, this might be expected.");
+    }
+
     const firstTab = tabs.shift();
     tabs.push(firstTab);
-
+    
     const tabsList = document.getElementById("tabs-list");
     if (!tabsList) {
         return console.error("No tabs list element found in the popup!");
@@ -31,11 +40,14 @@ async function updateTabsList(searchTerm) {
 
         const textContainer = document.createElement("span");
         const domain = new URL(tab.url).host;
-        textContainer.textContent = `${tab.title} — ${domain}`;
+        const timeSinceOpenedString = getTimeStampString(timestamps[tab.id]);
+
+        textContainer.textContent = `${tab.title} — ${domain}` + " (" + timeSinceOpenedString + ")";
+        
         //last index tab
         const last = tabs.indexOf(tab) === tabs.length - 1;
         if (last) {
-            textContainer.textContent = `${tab.title} — ${domain} — (Current Tab)`;
+            textContainer.textContent = `${tab.title} — ${domain}` + " (Open now)";
         }
 
         li.appendChild(favicon);
@@ -60,6 +72,24 @@ async function updateTabsList(searchTerm) {
     });
 
     document.getElementById("search").focus();
+}
+
+//Get time stamp string from time stamp.
+function getTimeStampString(timeStamp) {
+    const timeSinceOpened = timeStamp ? Date.now() - timeStamp : 0;
+    // time since opened in seconds, min if more than 60s, hour if more than 60min, day if more than 24h
+    let timeSinceOpenedString = `${Math.floor(timeSinceOpened / 1000)}sec`;
+    if (timeSinceOpened > 60000) {
+        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 60000)}min`;
+    }
+    if (timeSinceOpened > 3600000) {
+        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 3600000)}hours`;
+    }
+    if (timeSinceOpened > 86400000) {
+        timeSinceOpenedString = `${Math.floor(timeSinceOpened / 86400000)}days`;
+    }
+
+    return timeSinceOpenedString = 'Last visited ' + timeSinceOpenedString + ' ago';
 }
 
 // Sets the theme colors if needed.
@@ -121,11 +151,10 @@ function highlightFocusedRow() {
     });
 }
 
-// Fetches the MRU tabs and updates the tabs list.
-async function fetchMRUTabs() {
-    const response = await browser.runtime.sendMessage({ command: "getMRUTabs" });
-    const tabs = response.tabs;
-    return tabs;
+// Fetches the visitedData.
+async function fetchVisitedData() {
+    const response = await browser.runtime.sendMessage({ command: "getVisitedTabs" });
+    return response.visitedData;
 }
 
 // Initial calls to set up the popup.

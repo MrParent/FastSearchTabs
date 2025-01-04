@@ -72,7 +72,10 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
 });
 
 // Global array of tab IDs, most recent first
- let recentTabs = [];
+let visitedTabs = [];
+
+// visitedTimestamps: map of tabId -> last visited timestamp (in ms since epoch).
+let visitedTimestamps = {};
 
 /**
  * Listens for tab activation (when user switches to a tab).
@@ -80,41 +83,58 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
  */
 browser.tabs.onActivated.addListener((activeInfo) => {
   const activatedTabId = activeInfo.tabId;
-  
-  const existingIndex = recentTabs.indexOf(activatedTabId);
+
+  const existingIndex = visitedTabs.indexOf(activatedTabId);
   if (existingIndex !== -1) {
-    recentTabs.splice(existingIndex, 1);
+    visitedTabs.splice(existingIndex, 1);
   }
-  // Insert at the front
-  recentTabs.unshift(activatedTabId);
+
+  visitedTabs.unshift(activatedTabId);
   
-  // Keep size under a limit.
-  if (recentTabs.length > 100) {
-    recentTabs.pop();
+  if (visitedTabs.length > 100) {
+    visitedTabs.pop();
   }
+
+  visitedTimestamps[activatedTabId] = Date.now();
 });
 
 /**
  * Removes any closed tabs from our list to avoid stale IDs.
  */
 browser.tabs.onRemoved.addListener((tabId) => {
-  const index = recentTabs.indexOf(tabId);
+  const index = visitedTabs.indexOf(tabId);
   if (index !== -1) {
-    recentTabs.splice(index, 1);
+    visitedTabs.splice(index, 1);
+  }
+
+  if (visitedTimestamps[tabId]) {
+    delete visitedTimestamps[tabId];
   }
 });
 
 /**
+ * Gets the current visitedTabs and timestamps
+ * so the popup can build the list with "time since used."
+ */
+async function getVisitedData() {
+  const mRUTabs = await getTabsInMRUOrder();
+  return {
+    tabs: mRUTabs,       
+    timestamps: visitedTimestamps
+  };
+}
+
+/**
  * Gets all tabs in MRU order:
- * 1. The tabs found in `recentTabs` (most recent first).
+ * 1. The tabs found in `visitedTabs` (most recent first).
  * 2. Then, any other tabs in default order (as returned by query).
  */
 async function getTabsInMRUOrder() {
   const allTabs = await browser.tabs.query({ currentWindow: false });
   const sortedTabs = [];
 
-  // 1) For each tabId in `recentTabs`, if it's still open, push its tab info.
-  for (const tabId of recentTabs) {
+  // 1) For each tabId in `visitedTabs`, if it's still open, push its tab info.
+  for (const tabId of visitedTabs) {
     const t = allTabs.find((tab) => tab.id === tabId);
     if (t) {
       sortedTabs.push(t);
@@ -134,11 +154,10 @@ async function getTabsInMRUOrder() {
 }
 
 /**
- * Listen for messages requesting the MRU-ordered tabs.
+ * Listen for messages requesting the visited tabs data.
  */
-browser.runtime.onMessage.addListener(async (message, sender) => {
-  if (message.command === "getMRUTabs") {
-    const tabsInOrder = await getTabsInMRUOrder();
-    return Promise.resolve({ tabs: tabsInOrder });
+browser.runtime.onMessage.addListener(async (message) => {
+  if (message.command === "getVisitedTabs") {
+    return Promise.resolve({ visitedData: await getVisitedData() });
   }
 });
