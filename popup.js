@@ -59,8 +59,19 @@ async function updateTabsList(searchTerm) {
         }
 
         //Add event listeners to the list items.
-        li.addEventListener("click", () => {
-            browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
+        li.addEventListener("click", async () => {
+            const tabId = parseInt(li.dataset.tabId, 10);
+            try {
+                // We need the tab's window ID in order to focus that window.
+                // So, fetch the full tab info:
+                const tabInfo = await browser.tabs.get(tabId);
+                
+                // Now switch to that tab AND focus its parent window
+                await switchToTab(tabInfo.id, tabInfo.windowId);
+              } catch (err) {
+                console.error("Failed to switch tab:", err);
+              }
+
             window.close();
         });
         li.addEventListener("mouseenter", () => {
@@ -107,13 +118,24 @@ async function setTheme() {
 };
 
 // Adds some keydown event listening..
-document.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", async(event) => {
     if (event.key === "Escape") {
         window.close();
     } else if (event.key === "Enter") {
         const li = document.querySelector(".tab-row.focused");
-        browser.tabs.update(parseInt(li.dataset.tabId, 10), { active: true });
-        window.close();
+        const tabId = parseInt(li.dataset.tabId, 10);
+            try {
+                // We need the tab's window ID in order to focus that window.
+                // So, fetch the full tab info:
+                const tabInfo = await browser.tabs.get(tabId);
+                
+                // Now switch to that tab AND focus its parent window
+                await switchToTab(tabInfo.id, tabInfo.windowId);
+              } catch (err) {
+                console.error("Failed to switch tab:", err);
+              }
+
+            window.close();
     } else if (event.key === "Tab" || event.key === "ArrowDown" || event.key === "ArrowUp") {
         const tabsList = document.getElementById("tabs-list");
         const focusedElement = tabsList.querySelector(".focused");
@@ -155,6 +177,19 @@ function highlightFocusedRow() {
 async function fetchVisitedData() {
     const response = await browser.runtime.sendMessage({ command: "getVisitedTabs" });
     return response.visitedData;
+}
+
+// Switches to the tab and focuses the window.
+async function switchToTab(tabId, windowId) {
+    try {
+      // 1) Make the tab active
+      await browser.tabs.update(tabId, { active: true });
+  
+      // 2) Focus the window that contains that tab
+      await browser.windows.update(windowId, { focused: true });
+    } catch (error) {
+      console.error("Failed to switch or focus:", error);
+    }
 }
 
 // Initial calls to set up the popup.

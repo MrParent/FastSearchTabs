@@ -69,14 +69,52 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
       }
     }
   }
+
+  // If this focus change to another app, skip the timestamp logic.
+  if (windowId === browser.windows.WINDOW_ID_NONE) {
+    return;
+  }
+
+  // Update the timestamp for the active tab if focusing a new window and not the popup.
+  try {
+    const winInfo = await browser.windows.get(windowId, { populate: true });
+    if (winInfo.type === "popup") {
+      return;
+    }
+
+    const activeTab = winInfo.tabs.find((tab) => tab.active);
+    if (activeTab) {
+      const tabId = activeTab.id;
+      tabLastVisitMap[tabId] = Date.now();
+
+      const existingIndex = visitedTabs.indexOf(tabId);
+      if (existingIndex !== -1) {
+        visitedTabs.splice(existingIndex, 1);
+      }
+
+      visitedTabs.unshift(tabId);
+
+      try {
+        await browser.storage.local.set({
+          visitedTabs,
+          tabLastVisitMap
+        });
+      } catch (err) {
+        console.error("Error saving to storage:", err);
+      }
+    }
+  } catch (err) {
+    console.error("Failed to get or update window info:", err);
+  }
 });
 
-// Global array of tab IDs, most recent first
+// Visited tabs array
 let visitedTabs = [];
 
-// Map of tabId to last visit timestamps
+// Map of tabId to last visit time stamps.
 let tabLastVisitMap = {};
 
+// Load the visitedTabs and tabLastVisitMap from storage.
 (async function loadFromStorage() {
   try {
     // Load the visitedTabs and tabLastVisitMap from storage.
