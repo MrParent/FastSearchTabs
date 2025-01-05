@@ -1,7 +1,7 @@
 currentFocusedId = "";
 
 // Updates the tabs list with a search filter.
-async function updateTabsList(searchTerm) {
+async function updateTabsList(searchTerm, focusedIndex = 0) {
     const visitedData = await fetchVisitedData();
     const tabs = visitedData.tabs;
     if (!tabs) {
@@ -58,11 +58,6 @@ async function updateTabsList(searchTerm) {
         li.appendChild(favicon);
         li.appendChild(textContainer);
 
-        if (currentFocusedId === "") {
-            currentFocusedId = li.dataset.tabId;
-            li.classList.add("focused");
-        }
-
         //Add event listeners to the list items.
         li.addEventListener("click", async () => {
             const tabId = parseInt(li.dataset.tabId, 10);
@@ -88,6 +83,8 @@ async function updateTabsList(searchTerm) {
     });
 
     document.getElementById("search").focus();
+    const rows = document.querySelectorAll(".tab-row");
+    currentFocusedId = focusTabRow(rows, focusedIndex);
 }
 
 // Get the time since the timestamp.
@@ -154,14 +151,65 @@ document.addEventListener("keydown", async(event) => {
         }
         
         highlightFocusedRow();
+    } else if (event.key === "Delete" && event.ctrlKey) {
+        const rows = document.querySelectorAll(".tab-row");
+        const length = rows.length;
+        if (length === 1) {
+            return;
+        }
+
+        const li = document.querySelector(".tab-row.focused");
+        const currentIndex = [...rows].indexOf(li);
+        const tabId = parseInt(li.dataset.tabId, 10);
+        try {
+            await browser.tabs.remove(tabId);
+            const searchTerm = event.target.value.toLowerCase();
+            let newFocusIndex = currentIndex > 0
+            ? currentIndex - 1
+            : 0;
+            updateTabsList(searchTerm, newFocusIndex);
+        } catch (error) {
+            console.error("Failed to remove tab:", error);
+        }
     }
 });
+
+// Focuses the tab row at focusedIndex.
+function focusTabRow(rows, focusedIndex) {
+    const length = rows.length;
+
+    // Only one row, focus that one.
+    if (length === 1) {
+        rows[0].classList.add("focused");
+        return rows[0].dataset.tabId;
+    }
+
+    // Safeup if no rows.
+    if (length === 0) {
+        return "";
+    }
+
+    // If no valid focusedIndex, default to 0.
+    if (focusedIndex === null || Number.isNaN(focusedIndex)) {
+        focusedIndex = 0;
+    }
+
+    // Clamp the index so it's within [0, length-1].
+    if (focusedIndex < 0) {
+        focusedIndex = 0;
+    } else if (focusedIndex >= length) {
+        focusedIndex = length - 1;
+    }
+
+    rows[focusedIndex].classList.add("focused");
+
+    return rows[focusedIndex].dataset.tabId;
+}
 
 // Listens for search input changes and updates the tabs list.
 document.getElementById("search").addEventListener("input", (event) => {
     const searchTerm = event.target.value.toLowerCase();
-    currentFocusedId = "";
-    updateTabsList(searchTerm);
+    updateTabsList(searchTerm, 0);
 });
 
 // Toggle the focused class on the tab rows.
