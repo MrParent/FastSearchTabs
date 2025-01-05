@@ -47,12 +47,27 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
         } else {
             timeSinceString = timeSince(timestamps[tab.id]);
         }
-        textContainer.textContent = `${tab.title} — ${domain}` + " (" + timeSinceString + ")";
-        
+
+        const domainSpan = document.createElement("span");
+        domainSpan.textContent = domain;
+        domainSpan.classList.add("domain-text");
+
+        const timeSpan = document.createElement("span");
+        timeSpan.textContent = ` (${timeSinceString})`;
+        timeSpan.classList.add("time-text");
+
+        textContainer.textContent = tab.title;
+
+        // 4) Append your custom spans
+        if(domainSpan.textContent.length > 0) {
+            textContainer.appendChild(domainSpan);
+        }
+        textContainer.appendChild(timeSpan);
+
         //last index tab
         const last = tabs.indexOf(tab) === tabs.length - 1;
         if (last) {
-            textContainer.textContent = `${tab.title} — ${domain}` + " (Current tab)";
+            timeSpan.textContent = " (Current tab)";
         }
 
         li.appendChild(favicon);

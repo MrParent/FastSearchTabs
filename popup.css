@@ -1,9 +1,10 @@
 :root {
     --bg-color: #F9F9FB;
     --text-color: #000000;
-    --hover-bg-color: #dedede; /*rgba(0, 0, 0, 0.05); */
+    --hover-bg-color: #e7e7e7; /*rgba(0, 0, 0, 0.05); */
     --text-border-color: #046bab;
     --text-bg-color: #ffffff;
+    --row-extra-text-color: #8b8b8b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -13,7 +14,7 @@
         --hover-bg-color: rgba(255, 255, 255, 0.17);
         --text-border-color: #0ca2ff84;
         --text-bg-color: #1e1e1e;
-
+        --row-extra-text-color: #949494;
     }
 }
 
@@ -80,4 +81,18 @@ input[type="text"] {
     border-radius: 0.25rem;
     background-color: var(--text-bg-color);
     color: var(--text-color);
+}
+
+.domain-text {
+    color: var(--row-extra-text-color);
+    font-style: italic;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
+  
+.time-text {
+    color: var(--row-extra-text-color);
+    font-style: bold;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
 }
