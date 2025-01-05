@@ -51,7 +51,8 @@ body {
     gap: 0.5rem;
     padding: 0.5rem;
     cursor: pointer;
-    display: flex;        /* ensure it takes up the full available width */
+    display: flex;
+    border-radius: 0.25rem;
 }
 
 .tab-row.focused {
@@ -66,7 +67,7 @@ body {
 
 input[type="text"] {
     width:100%;
-    display: block;        /* ensure it takes up the full available width */
+    display: block;
     box-sizing: border-box;
     padding-left: 0.75rem;
     padding-right: 0.5rem;
