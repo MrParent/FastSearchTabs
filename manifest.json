@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Fastlane Tabs",
   "version": "1.0",
-  "description": "Creates a popup for switching tabs fast and easy, with similar functionality as tab switching often has in other browsers.",
+  "description": "Creates a quick and easy popup for switching tabs, similar to the built-in tab search found in other browsers.",
   "permissions": ["tabs", "storage"],
   "background": {
     "scripts": ["background.js"]
@@ -23,7 +23,7 @@
   "commands": {
     "open-popup": {
       "suggested_key": { "default": "Ctrl+Alt+S" },
-      "description": "Send a 'toggle-feature' event to the extension"
+      "description": "Open the Fastlane Tabs switch tabs dialog"
     }
   },
   "web_accessible_resources": [
