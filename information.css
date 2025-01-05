@@ -1,0 +1,70 @@
+:root {
+    --bg-color: #F9F9FB;
+    --text-color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-color: #121212;
+        --text-color: #ffffff;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
+    overflow: auto;
+    font-family: sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding:1rem;
+    max-width: 300px; /* for example */
+}
+
+/* A simple container to hold everything */
+.info-container {
+  padding: 0.25rem;
+  box-sizing: border-box;
+}
+
+/* Header area with the icon + title on one line */
+.info-header {
+  display: flex;
+  align-items: center; /* vertically center icon and title */
+  margin-bottom: 0.5rem;
+}
+
+/* The icon in the top-left corner */
+.info-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 0.5rem;
+}
+
+/* Title style next to the icon */
+.info-title {
+  font-size: 1.5rem;
+  margin: 0; /* remove default <h1> margins */
+}
+
+/* The main text content */
+.info-content p, .info-content ul {
+  margin: 0.25rem 0;
+  line-height: 1.2;
+}
+
+
+/* The main text content */
+.info-content h1 {
+    margin: 0.75rem 0 0.25rem 0;
+}

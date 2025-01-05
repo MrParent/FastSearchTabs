@@ -17,7 +17,8 @@
     "default_icon": {
       "16": "icon.svg",
       "32": "icon.svg"
-    }
+    },
+    "default_popup": "information.html"
   },
   "commands": {
     "open-popup": {
@@ -27,6 +28,8 @@
   },
   "web_accessible_resources": [
     "popup.html",
-    "popup.css"
+    "popup.css",
+    "information.html",
+    "information.css"
   ]
 }
