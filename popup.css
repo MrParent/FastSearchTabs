@@ -92,7 +92,6 @@ input[type="text"] {
   
 .time-text {
     color: var(--row-extra-text-color);
-    font-style: bold;
     font-size: 0.8rem;
     margin-left: 0.5rem;
 }

@@ -113,21 +113,7 @@ function timeSince(timestamp) {
     if (hours < 24) return `${hours}hours ago`;
     const days = Math.floor(hours / 24);
     return `${days}days ago`;
-  }
-
-// Sets the theme colors if needed.
-async function setTheme() {
-    try {
-        const currentTheme = await browser.theme.getCurrent();
-        if (currentTheme && currentTheme.colors) {
-            // e.g., override with the theme’s toolbar and text color
-            document.documentElement.style.setProperty("--bg-color", currentTheme.colors.toolbar || "#121212");
-            document.documentElement.style.setProperty("--text-color", currentTheme.colors.toolbar_text || "#fff");
-        }
-    } catch (e) {
-        console.warn("No theme API available, or error retrieving theme:", e);
-    }
-};
+}
 
 // Adds some keydown event listening..
 document.addEventListener("keydown", async(event) => {
@@ -257,4 +243,3 @@ async function switchToTab(tabId, windowId) {
 
 // Initial calls to set up the popup.
 updateTabsList();
-setTheme();
