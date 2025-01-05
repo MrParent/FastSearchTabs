@@ -8,15 +8,18 @@
     "scripts": ["background.js"]
   },
   "icons": {
-    "16": "icon.svg",
-    "48": "icon.svg",
-    "128": "icon.svg"
+    "16": "fastSearchIcon16.png",
+    "32": "fastSearchIcon32.png",
+    "48": "fastSearchIcon48.png",
+    "128": "fastSearchIcon128.png"
   },
   "browser_action": {
     "default_title": "Fastlane Tabs",
     "default_icon": {
-      "16": "icon.svg",
-      "32": "icon.svg"
+      "16": "fastSearchIcon16.png",
+      "32": "fastSearchIcon32.png",
+      "48": "fastSearchIcon48.png",
+      "128": "fastSearchIcon128.png"
     },
     "default_popup": "information.html"
   },
