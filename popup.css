@@ -17,15 +17,26 @@
     }
 }
 
-body {
+/* Ensure the html/body fill the entire popup and have no default margin */
+html, body {
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 1rem;
+    box-sizing: border-box; /* So padding is included in total width/height */
+}
+
+/* Inherit box-sizing for all elements */
+*, *::before, *::after {
+    box-sizing: inherit;
+}
+
+body {
     overflow: auto;
     font-family: sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
+    padding:1rem;
 }
 
 #tabs-list {
@@ -35,12 +46,12 @@ body {
   }
 
 .tab-row {
-    display: flex;
+    width:100%;
     align-items: left;
-    gap: 0.75rem;
-    padding: 0.33rem;
+    gap: 0.5rem;
+    padding: 0.5rem;
     cursor: pointer;
-    width: 96%;
+    display: flex;        /* ensure it takes up the full available width */
 }
 
 .tab-row.focused {
@@ -54,9 +65,14 @@ body {
 }
 
 input[type="text"] {
-    width: 94%;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
+    width:100%;
+    display: block;        /* ensure it takes up the full available width */
+    box-sizing: border-box;
+    padding-left: 0.75rem;
+    padding-right: 0.5rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    margin-bottom: 0.75rem;
     font-size: 1rem;
     border-style: none;
     outline: 2px solid var(--text-border-color);

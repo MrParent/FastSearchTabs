@@ -17,7 +17,7 @@ async function createPopupWindow() {
   const tabsCount = tabs.length;
 
   // Scale the window height depending on the number of tabs.
-  const height = parseInt(Math.min((128 + 28 * tabsCount), maxHeight));
+  const height = parseInt(Math.min((127 + 34 * tabsCount), maxHeight));
   const width = parseInt(currentWidth/2); 
 
   const popup = await browser.windows.create({
