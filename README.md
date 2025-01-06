@@ -1,6 +1,6 @@
 # Fastlane Tabs
 
-**Fastlane Tabs** is a Firefox add-on that makes tab switching easier by offering a quick and intuitive popup for changing between tabs, similar to the built-in tab search found in other browsers like Chrome and Edge. It's only tested on Windows but should work on other desktop operating systems as well.
+**Fastlane Tabs** is a Firefox add-on that makes tab switching easier by offering a quick and intuitive popup for changing between open tabs, similar to the built-in tab search found in other browsers like Chrome and Edge.
 
 ## Features
 
@@ -31,13 +31,17 @@ Fastlane Tabs was developed to address several limitations and enhance the tab s
    - **Enhanced Workflow:** Fastlane Tabs reduces this to three steps: press `Ctrl + Alt + S`, search or navigate through tabs, and press `Enter` or click with the mouse.
 
 2. **Enhancements? Over Existing Add-ons:**
-   - Existing add-ons like "TabSearch", "Fast Tab Switcher" or "Tabby - Window & Tab Manager" offer robust tab management and I recommend that you try them out. Especially if you want a tab manager. For me, clutter of functions and design, and the lack of specific features such as **dark mode** (sometimes) and **time-since functionality** made me want something else.
+   - Existing add-ons like "TabSearch", "Fast Tab Switcher" or "Tabby - Window & Tab Manager" offer robust tab management and I recommend that you try them out. Especially if you want a tab manager. For me, clutter of functions and design, the (sometimes) lack of **dark mode** and the lack of **time-since functionality** made me want something else.
+
+**Compatibility**
+   - Tested On: Windows
+    Compatible With: Other desktop operating systems (should work on macOS and Linux, too)
 
 ## Installation
 
 1. **Download from [Mozilla Add-ons](https://addons.mozilla.org/)**
 
-2. **Or use web-ext (https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)**
+2. **Or use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)**
 
 ## License
 
