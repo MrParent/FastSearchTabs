@@ -25,8 +25,11 @@
   },
   "commands": {
     "open-popup": {
-      "suggested_key": { "default": "Ctrl+Alt+S" },
-      "description": "Open the Fastlane Tabs switch tabs dialog"
+      "suggested_key": { 
+        "default": "Ctrl+Alt+S",
+        "mac": "Command+Alt+S"
+      },
+      "description": "Open the Fastlane Tabs dialog."
     }
   },
   "web_accessible_resources": [

@@ -115,8 +115,24 @@ function timeSince(timestamp) {
     return `${days}days ago`;
 }
 
+// Utility function to check if the OS is macOS
+async function isMacOS() {
+    try {
+        const platformInfo = await browser.runtime.getPlatformInfo();
+        return platformInfo.os === "mac";
+    } catch (error) {
+        console.error("Failed to get platform info:", error);
+        return false; // Default to false if there's an error
+    }
+}
+
 // Adds some keydown event listening..
 document.addEventListener("keydown", async(event) => {
+    const isMac = await isMacOS();
+
+    const deleteKey = isMac ? "Backspace" : "Delete";
+    const modifierKey = isMac ? event.metaKey : event.ctrlKey;
+
     if (event.key === "Escape") {
         window.close();
     } else if (event.key === "Enter") {
@@ -152,7 +168,7 @@ document.addEventListener("keydown", async(event) => {
         }
         
         highlightFocusedRow();
-    } else if (event.key === "Delete" && event.ctrlKey) {
+    } else if (event.key === deleteKey && modifierKey) {
         const rows = document.querySelectorAll(".tab-row");
         const length = rows.length;
         if (length === 1) {
