@@ -2,6 +2,16 @@
 
 **Fastlane Tabs** is a Firefox add-on that makes tab switching easier by offering a quick and intuitive popup for changing between open tabs, similar to the built-in tab search found in other browsers like Chrome and Edge.
 
+## Screenshots
+
+### Dark mode
+
+![Dialog in dark mode](screenshots/DarkMode.png)
+
+### Light mode
+
+![Dialog in light mode](screenshots/LightMode.png)
+
 ## Features
 
 - **Quick Tab Switching:** Press the default shortcut (`Ctrl+Alt+S`, or macOS:`Command+Alt+S`) to open the tab switch dialog and search for the desired tab.
