@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Fastlane Tabs",
   "version": "1.0",
-  "description": "Creates a quick and easy popup for switching tabs, similar to the built-in tab search found in other browsers.",
+  "description": "Adds a quick, easy-to-use popup for switching and managing open tabs — much like the built-in tab search in other browsers.",
   "permissions": ["tabs", "storage"],
   "background": {
     "scripts": ["background.js"]
