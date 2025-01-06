@@ -32,6 +32,12 @@
       "description": "Open the Fastlane Tabs dialog."
     }
   },
+  "browser_specific_settings": {
+  "gecko": {
+    "id": "fastlanetabs@example.com",
+    "strict_min_version": "42.0"
+  }
+},
   "web_accessible_resources": [
     "popup.html",
     "popup.css",
