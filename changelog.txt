@@ -1,0 +1,2 @@
+Version 1.1:
+- Fixed spacing on time-since text for hours and days 
