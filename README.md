@@ -49,7 +49,7 @@ Fastlane Tabs was developed to address several limitations and enhance the tab s
 
 ## Installation
 
-1. **Download from [Mozilla Add-ons](https://addons.mozilla.org/)**
+1. **Download from [Mozilla Add-ons](https://addons.mozilla.org/sv-SE/firefox/addon/fastlane-tabs/)**
 
 2. **Or use [web-ext](https://extensionworkshop.com/documentation/develop/getting-started-with-web-ext/)**
 
