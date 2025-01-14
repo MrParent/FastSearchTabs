@@ -25,24 +25,16 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
 
     // Populate the list with each tab's title, image and host url.
     tabs.forEach(async (tab) => {
-        if (searchTerm && !tab.title.toLowerCase().includes(searchTerm)) {
+        // Get the container info for the tab.
+        const {containerColor, containerName} = await getContainerInfo(tab);
+
+        const domain = new URL(tab.url).host;
+
+        //Search for tab title, domain and container
+        if (searchTerm && (!tab.title.toLowerCase().includes(searchTerm) &&
+            !domain.toLowerCase().includes(searchTerm) &&
+            !containerName.toLowerCase().includes(searchTerm))) {
             return;
-        }
-
-        // Get the container information
-        const cookieStoreId = tab.cookieStoreId;
-        let defaultContainer = 'firefox-default';
-        let containerColor;
-        let containerName;
-
-        if (cookieStoreId && cookieStoreId !== defaultContainer) {
-            try {
-                const container = await browser.contextualIdentities.get(cookieStoreId);
-                containerColor = container.color;
-                containerName = container.name;
-            } catch (containerError) {
-                console.error(`Failed to retrieve container for Tab ID: ${tab.id}`, containerError);
-            }
         }
 
         const li = document.createElement("li");
@@ -55,7 +47,6 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
         favicon.alt = "";
 
         const textContainer = document.createElement("span");
-        const domain = new URL(tab.url).host;
         const timeStamp = timestamps[tab.id];
         let timeSinceString;
         if (!timeStamp) {
@@ -149,6 +140,30 @@ async function isMacOS() {
         console.error("Failed to get platform info:", error);
         return false; // Default to false if there's an error
     }
+}
+
+// Get the container info (color and name) for a tab.
+async function getContainerInfo(tab) {
+    let containerColor;
+    let containerName;
+    const cookieStoreId = tab.cookieStoreId;
+    const defaultContainerId = 'firefox-default';
+
+    if (cookieStoreId && cookieStoreId !== defaultContainerId) {
+        try {
+            // Retrieve the container details using the cookieStoreId
+            const container = await browser.contextualIdentities.get(cookieStoreId);
+            
+            containerColor = container.color;
+            containerName = container.name;
+        } catch (error) {
+            // Log any errors encountered during the retrieval
+            console.error(`Failed to retrieve container for Tab ID: ${tab.id}`, error);
+        }
+    }
+
+    // Return the container information
+    return { containerColor, containerName };
 }
 
 // Adds some keydown event listening..
