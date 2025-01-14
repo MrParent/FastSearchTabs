@@ -89,6 +89,12 @@ input[type="text"] {
     font-size: 0.8rem;
     margin-left: 0.5rem;
 }
+
+.container-text {
+    font-style: italic;
+    font-size: 0.8rem;
+    margin-left: 0.5rem;
+}
   
 .time-text {
     color: var(--row-extra-text-color);

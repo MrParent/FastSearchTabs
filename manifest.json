@@ -3,7 +3,7 @@
   "name": "Fastlane Tabs",
   "version": "1.1",
   "description": "Adds a quick, easy-to-use popup for switching and managing open tabs — much like the built-in tab search in other browsers.",
-  "permissions": ["tabs", "storage"],
+  "permissions": ["tabs", "storage", "contextualIdentities"],
   "background": {
     "scripts": ["background.js"]
   },

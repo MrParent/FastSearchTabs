@@ -15,7 +15,7 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
 
     const firstTab = tabs.shift();
     tabs.push(firstTab);
-    
+
     const tabsList = document.getElementById("tabs-list");
     if (!tabsList) {
         return console.error("No tabs list element found in the popup!");
@@ -24,9 +24,25 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
     tabsList.innerHTML = "";
 
     // Populate the list with each tab's title, image and host url.
-    tabs.forEach((tab) => {
+    tabs.forEach(async (tab) => {
         if (searchTerm && !tab.title.toLowerCase().includes(searchTerm)) {
             return;
+        }
+
+        // Get the container information
+        const cookieStoreId = tab.cookieStoreId;
+        let defaultContainer = 'firefox-default';
+        let containerColor;
+        let containerName;
+
+        if (cookieStoreId && cookieStoreId !== defaultContainer) {
+            try {
+                const container = await browser.contextualIdentities.get(cookieStoreId);
+                containerColor = container.color;
+                containerName = container.name;
+            } catch (containerError) {
+                console.error(`Failed to retrieve container for Tab ID: ${tab.id}`, containerError);
+            }
         }
 
         const li = document.createElement("li");
@@ -52,16 +68,27 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
         domainSpan.textContent = domain;
         domainSpan.classList.add("domain-text");
 
+        const containerSpan = document.createElement("span");
+        containerSpan.textContent = containerName ?? "";
+        if(containerColor) {
+            containerSpan.style.color = containerColor;
+        }
+        containerSpan.classList.add("container-text");
+
         const timeSpan = document.createElement("span");
         timeSpan.textContent = ` (${timeSinceString})`;
         timeSpan.classList.add("time-text");
 
         textContainer.textContent = tab.title;
 
-        // 4) Append your custom spans
-        if(domainSpan.textContent.length > 0) {
+        if (domainSpan.textContent.length > 0) {
             textContainer.appendChild(domainSpan);
         }
+
+        if (containerSpan.textContent.length > 0) {
+            textContainer.appendChild(containerSpan);
+        }
+
         textContainer.appendChild(timeSpan);
 
         //last index tab
@@ -77,15 +104,13 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
         li.addEventListener("click", async () => {
             const tabId = parseInt(li.dataset.tabId, 10);
             try {
-                // We need the tab's window ID in order to focus that window.
-                // So, fetch the full tab info:
                 const tabInfo = await browser.tabs.get(tabId);
-                
-                // Now switch to that tab AND focus its parent window
+
+                // Switch to tab AND focus parent window
                 await switchToTab(tabInfo.id, tabInfo.windowId);
-              } catch (err) {
+            } catch (err) {
                 console.error("Failed to switch tab:", err);
-              }
+            }
 
             window.close();
         });
@@ -138,18 +163,18 @@ document.addEventListener("keydown", async(event) => {
     } else if (event.key === "Enter") {
         const li = document.querySelector(".tab-row.focused");
         const tabId = parseInt(li.dataset.tabId, 10);
-            try {
-                // We need the tab's window ID in order to focus that window.
-                // So, fetch the full tab info:
-                const tabInfo = await browser.tabs.get(tabId);
-                
-                // Now switch to that tab AND focus its parent window
-                await switchToTab(tabInfo.id, tabInfo.windowId);
-              } catch (err) {
-                console.error("Failed to switch tab:", err);
-              }
+        try {
+            // We need the tab's window ID in order to focus that window.
+            // So, fetch the full tab info:
+            const tabInfo = await browser.tabs.get(tabId);
 
-            window.close();
+            // Now switch to that tab AND focus its parent window
+            await switchToTab(tabInfo.id, tabInfo.windowId);
+        } catch (err) {
+            console.error("Failed to switch tab:", err);
+        }
+
+        window.close();
     } else if (event.key === "Tab" || event.key === "ArrowDown" || event.key === "ArrowUp") {
         const tabsList = document.getElementById("tabs-list");
         const focusedElement = tabsList.querySelector(".focused");
@@ -166,7 +191,7 @@ document.addEventListener("keydown", async(event) => {
             newFocusedElement.classList.add("focused");
             currentFocusedId = newFocusedElement.dataset.tabId;
         }
-        
+
         highlightFocusedRow();
     } else if (event.key === deleteKey && modifierKey) {
         const rows = document.querySelectorAll(".tab-row");
@@ -182,8 +207,8 @@ document.addEventListener("keydown", async(event) => {
             await browser.tabs.remove(tabId);
             const searchTerm = event.target.value.toLowerCase();
             let newFocusIndex = currentIndex > 0
-            ? currentIndex - 1
-            : 0;
+                ? currentIndex - 1
+                : 0;
             updateTabsList(searchTerm, newFocusIndex);
         } catch (error) {
             console.error("Failed to remove tab:", error);
@@ -247,13 +272,13 @@ async function fetchVisitedData() {
 // Switches to the tab and focuses the window.
 async function switchToTab(tabId, windowId) {
     try {
-      // 1) Make the tab active
-      await browser.tabs.update(tabId, { active: true });
-  
-      // 2) Focus the window that contains that tab
-      await browser.windows.update(windowId, { focused: true });
+        // 1) Make the tab active
+        await browser.tabs.update(tabId, { active: true });
+
+        // 2) Focus the window that contains that tab
+        await browser.windows.update(windowId, { focused: true });
     } catch (error) {
-      console.error("Failed to switch or focus:", error);
+        console.error("Failed to switch or focus:", error);
     }
 }
 
