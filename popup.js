@@ -24,7 +24,7 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
     tabsList.innerHTML = "";
 
     // Populate the list with each tab's title, image and host url.
-    tabs.forEach(async (tab) => {
+    await tabs.forEach(async (tab) => {
         // Get the container info for the tab.
         const {containerColor, containerName} = await getContainerInfo(tab);
 
@@ -264,7 +264,7 @@ function focusTabRow(rows, focusedIndex) {
     }
 
     rows[focusedIndex].classList.add("focused");
-
+    
     return rows[focusedIndex].dataset.tabId;
 }
 

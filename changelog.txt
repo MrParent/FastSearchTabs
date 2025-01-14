@@ -1,2 +1,6 @@
 Version 1.1:
-- Fixed spacing on time-since text for hours and days 
+- Added container names in the tab text rows in the dialog.
+- Extended search to also include container names and host urls.
+- Hopefully fixed crash regarding window size sometimes getting floats as inputs and starts crashing. 
+- Fixed spacing on time-since text for hours and days
+- Improved texts for time-since (1 day vs 2 days, etc)

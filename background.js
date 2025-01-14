@@ -4,21 +4,7 @@ let currentPopupWindowId = null;
 // Creates a new popup window.
 async function createPopupWindow() {
   const currentWindow = await browser.windows.getCurrent();
-
-  const currentWidth = currentWindow.width ?? 800;
-  const currentHeight = currentWindow.height ?? 600;
-  const maxHeight = currentHeight * 0.8;
-  const currentLeft = currentWindow.left ?? 0;
-  const currentTop = currentWindow.top ?? 0;
-  const left = currentLeft + currentWidth / 4;
-  const top = currentTop + 160;
- 
-  const tabs = await browser.tabs.query({});
-  const tabsCount = tabs.length;
-
-  // Scale the window height depending on the number of tabs.
-  const height = parseInt(Math.min((127 + 34 * tabsCount), maxHeight));
-  const width = parseInt(currentWidth/2); 
+  const {width, height, top, left} = await calculatePopupDimensions(currentWindow);
 
   const popup = await browser.windows.create({
     url: browser.runtime.getURL("popup.html"),
@@ -30,6 +16,32 @@ async function createPopupWindow() {
   });
 
   currentPopupWindowId = popup.id;
+}
+
+//Calculate dimensions for the popup window.
+async function calculatePopupDimensions(currentWindow) {
+  const currentWidth = currentWindow.width ?? 800;
+  const currentHeight = currentWindow.height ?? 600;
+  const maxHeight = currentHeight * 0.8;
+  const currentLeft = currentWindow.left ?? 0;
+  const currentTop = currentWindow.top ?? 0;
+  let left = currentLeft + currentWidth / 4;
+  let top = currentTop + 160;
+
+  const tabs = await browser.tabs.query({});
+  const tabsCount = tabs.length;
+
+  // Scale the window height depending on the number of tabs.
+  let height = Math.min((127 + 34 * tabsCount), maxHeight);
+  let width = currentWidth/2;
+
+  // Convert to integers, rounding to the nearest whole number.
+  width = Math.round(width);
+  height = Math.round(height);
+  top = Math.round(top);
+  left = Math.round(left);
+
+  return { width, height, top, left };
 }
 
 // Listen for the command to open the popup. Close the current one if it's open.
