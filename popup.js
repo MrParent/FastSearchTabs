@@ -76,10 +76,6 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
             textContainer.appendChild(domainSpan);
         }
 
-        if (containerSpan.textContent.length > 0) {
-            textContainer.appendChild(containerSpan);
-        }
-
         textContainer.appendChild(timeSpan);
 
         //last index tab
@@ -88,6 +84,9 @@ async function updateTabsList(searchTerm, focusedIndex = 0) {
             timeSpan.textContent = " (Current tab)";
         }
 
+        if (containerSpan.textContent.length > 0) {
+            li.appendChild(containerSpan);
+        }
         li.appendChild(favicon);
         li.appendChild(textContainer);
 
